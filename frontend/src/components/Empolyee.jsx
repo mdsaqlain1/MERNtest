@@ -41,10 +41,18 @@ const CreateEmployeeForm = () => {
     validationSchema: employeeValidationSchema,
     onSubmit: (values) => {
       const formData = new FormData();
-      for (const key in values) {
-        formData.append(key, values[key]);
-      }
-      console.log("formdata",formData)
+
+      formData.append('image', values.image);
+      formData.append('name', values.name);
+      formData.append('email', values.email);
+      formData.append('mobile', values.mobile);
+      formData.append('designation', values.designation);
+      formData.append('gender', values.gender);
+
+      values.courses.forEach((course, index) => {
+        formData.append(`courses[${index}]`, course);
+      });
+      
       axios.post(`${BASE_URL}/employee`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',

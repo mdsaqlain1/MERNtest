@@ -141,6 +141,7 @@ router.get("/v1/employee/:_id",authenticateJwt, async (req, res) => {
 // Update a user by ID
 router.put("/v1/employee/:_id",authenticateJwt, upload.single('image'), async (req, res) => {
   try {
+    console.log(req.body.courses);
     await employeeValidationSchema.validate(req.body, { abortEarly: false });
     const { name, email, mobile, designation, gender, courses, oldImage } = req.body;
     

@@ -60,6 +60,7 @@ const UpdateEmployee = () => {
   }, [id]);
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
+    console.log(formik.values.courses);
     if (checked) {
       formik.setFieldValue("courses", [...formik.values.courses, value]);
     } else {
@@ -94,8 +95,11 @@ const UpdateEmployee = () => {
       formData.append('mobile', values.mobile);
       formData.append('designation', values.designation);
       formData.append('gender', values.gender);
-      formData.append('courses', values.courses);
-      
+
+      values.courses.forEach((course, index) => {
+        formData.append(`courses[${index}]`, course);
+      });
+      console.log("formdata",formData.getAll('courses'))
       axios.put(`${BASE_URL}/employee/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
