@@ -1,16 +1,19 @@
-import { useFormik } from 'formik';
-import Navbar from './Navbar';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { BASE_URL_API } from '../../global';
-import { employeeValidationSchema } from '../../../backend/validation';
-import { useNavigate } from 'react-router-dom';
+import { useFormik } from "formik";
+import Navbar from "./Navbar";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { BASE_URL_API } from "../../global";
+import { employeeValidationSchema } from "../../../backend/validation";
+import { useNavigate } from "react-router-dom";
 
 const BASE_URL = BASE_URL_API;
 
 const CreateEmployeeForm = () => {
   const [admin, setAdmin] = useState(null);
+  const [courses, setCourses] = useState([]); // State to store courses fetched from the API
   const navigate = useNavigate();
+
+  // Fetch admin data
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
@@ -18,54 +21,66 @@ const CreateEmployeeForm = () => {
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + localStorage.getItem("token"),
-          }
+          },
         });
         setAdmin(response.data);
       } catch (error) {
-        console.error('Error fetching admin:', error);
+        console.error("Error fetching admin:", error);
       }
     };
     fetchAdmin();
   }, []);
 
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/courses`);
+        setCourses(response.data[0].courses);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+    fetchCourses();
+  }, []);
+
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
-      name: '',
-      email: '',
-      mobile: '',
-      designation: '',
-      gender: '',
-      courses: [],
+      name: "",
+      email: "",
+      mobile: "",
+      designation: "",
+      gender: "",
+      courses: [], // Initialize courses as an empty array
       image: null,
     },
     validationSchema: employeeValidationSchema,
     onSubmit: (values) => {
       const formData = new FormData();
 
-      formData.append('image', values.image);
-      formData.append('name', values.name);
-      formData.append('email', values.email);
-      formData.append('mobile', values.mobile);
-      formData.append('designation', values.designation);
-      formData.append('gender', values.gender);
-
+      formData.append("image", values.image);
+      formData.append("name", values.name);
+      formData.append("email", values.email);
+      formData.append("mobile", values.mobile);
+      formData.append("designation", values.designation);
+      formData.append("gender", values.gender);
       values.courses.forEach((course, index) => {
         formData.append(`courses[${index}]`, course);
       });
-      
-      axios.post(`${BASE_URL}/employee`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          "Authorization": "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        navigate('/employes');
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      axios
+        .post(`${BASE_URL}/employee`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          navigate("/employes");
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   });
 
@@ -84,19 +99,21 @@ const CreateEmployeeForm = () => {
   return (
     <>
       <Navbar />
-      {admin && 
+      {admin && (
         <form onSubmit={formik.handleSubmit} className="p-6">
           {/* Name */}
           <div className="mt-4 flex items-center">
-            <label htmlFor="name" className="w-32">Name:</label>
+            <label htmlFor="name" className="w-32">
+              Name:
+            </label>
             <input
               id="name"
               name="name"
               type="text"
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}  // Added onBlur
+              onBlur={formik.handleBlur} // Added onBlur
               value={formik.values.name}
-              className="border p-2 max-w-xs flex-1" 
+              className="border p-2 max-w-xs flex-1"
             />
             {formik.touched.name && formik.errors.name && (
               <div className="text-red-500">{formik.errors.name}</div>
@@ -105,13 +122,15 @@ const CreateEmployeeForm = () => {
 
           {/* Email */}
           <div className="mt-4 flex items-center">
-            <label htmlFor="email" className="w-32">Email:</label>
+            <label htmlFor="email" className="w-32">
+              Email:
+            </label>
             <input
               id="email"
               name="email"
               type="email"
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}  // Added onBlur
+              onBlur={formik.handleBlur} // Added onBlur
               value={formik.values.email}
               className="border p-2 max-w-xs flex-1"
             />
@@ -122,13 +141,15 @@ const CreateEmployeeForm = () => {
 
           {/* Mobile */}
           <div className="mt-4 flex items-center">
-            <label htmlFor="mobile" className="w-32">Mobile No:</label>
+            <label htmlFor="mobile" className="w-32">
+              Mobile No:
+            </label>
             <input
               id="mobile"
               name="mobile"
               type="text"
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}  // Added onBlur
+              onBlur={formik.handleBlur} // Added onBlur
               value={formik.values.mobile}
               className="border p-2 max-w-xs flex-1"
             />
@@ -139,12 +160,14 @@ const CreateEmployeeForm = () => {
 
           {/* Designation */}
           <div className="mt-4 flex items-center">
-            <label htmlFor="designation" className="w-32">Designation:</label>
+            <label htmlFor="designation" className="w-32">
+              Designation:
+            </label>
             <select
               id="designation"
               name="designation"
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}  // Added onBlur
+              onBlur={formik.handleBlur} // Added onBlur
               value={formik.values.designation}
               className="border p-2 max-w-xs flex-1"
             >
@@ -168,8 +191,8 @@ const CreateEmployeeForm = () => {
                   name="gender"
                   value="M"
                   onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}  // Added onBlur
-                  checked={formik.values.gender === 'M'}
+                  onBlur={formik.handleBlur} // Added onBlur
+                  checked={formik.values.gender === "M"}
                 />
                 M
               </label>
@@ -179,8 +202,8 @@ const CreateEmployeeForm = () => {
                   name="gender"
                   value="F"
                   onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}  // Added onBlur
-                  checked={formik.values.gender === 'F'}
+                  onBlur={formik.handleBlur} // Added onBlur
+                  checked={formik.values.gender === "F"}
                 />
                 F
               </label>
@@ -194,46 +217,29 @@ const CreateEmployeeForm = () => {
           <div className="mt-4 flex items-center">
             <label className="w-32">Courses:</label>
             <div className="flex space-x-4 flex-1">
-              <label>
-                <input
-                  type="checkbox"
-                  name="courses"
-                  value="MCA"
-                  onChange={handleCheckboxChange}
-                  checked={formik.values.courses.includes('MCA')}
-                />
-                MCA
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  name="courses"
-                  value="BCA"
-                  onChange={handleCheckboxChange}
-                  checked={formik.values.courses.includes('BCA')}
-                />
-                BCA
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  name="courses"
-                  value="BSC"
-                  onChange={handleCheckboxChange}
-                  checked={formik.values.courses.includes('BSC')}
-                />
-                BSC
-              </label>
+              {courses.map((course) => (
+                <label key={course}>
+                  <input
+                    type="checkbox"
+                    name="courses"
+                    value={course}
+                    onChange={handleCheckboxChange}
+                    checked={formik.values.courses.includes(course)}
+                  />
+                  {course}
+                </label>
+              ))}
             </div>
             {formik.touched.courses && formik.errors.courses && (
               <div className="text-red-500">{formik.errors.courses}</div>
             )}
           </div>
 
-
           {/* Image Upload */}
           <div className="mt-4 flex items-center">
-            <label htmlFor="image" className="w-32">Image Upload:</label>
+            <label htmlFor="image" className="w-32">
+              Image Upload:
+            </label>
             <input
               id="image"
               name="image"
@@ -242,7 +248,7 @@ const CreateEmployeeForm = () => {
               onChange={(event) => {
                 formik.setFieldValue("image", event.currentTarget.files[0]);
               }}
-              onBlur={formik.handleBlur}  // Added onBlur
+              onBlur={formik.handleBlur} // Added onBlur
               className="border p-2 max-w-xs flex-1"
             />
             {formik.touched.image && formik.errors.image && (
@@ -257,7 +263,7 @@ const CreateEmployeeForm = () => {
             </button>
           </div>
         </form>
-      }
+      )}
     </>
   );
 };

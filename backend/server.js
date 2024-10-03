@@ -13,8 +13,8 @@ app.use('/api', router);
 app.use('/uploads', express.static('uploads'));
 
 configDotenv();
-const port = process.env.PORT;
-const uri = process.env.MONGO_URI;
+const port = 3000;
+const uri = 'mongodb://127.0.0.1:27017/';
 
 await mongoose.connect(uri, { dbName : "employeeDB"})
   .then(() => {

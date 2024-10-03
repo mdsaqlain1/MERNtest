@@ -13,9 +13,22 @@ const UpdateEmployee = () => {
   const navigate = useNavigate();
   const [admin, setAdmin] = useState(null);
   const [employee, setEmployee] = useState(null);
+  const [courses, setCourses] = useState([])
   const { id } = useParams();
 
   useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/courses`);
+        setCourses(response.data[0].courses);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+    fetchCourses();
+  }, []);
+  useEffect(() => {
+    
     const fetchAdmin = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/me`, {
@@ -223,42 +236,22 @@ const UpdateEmployee = () => {
           {/* Course */}
           <div className="mt-4 flex items-center">
             <label className="w-32">Courses:</label>
-            <div className="flex space-x-4 flex-1">
-              <label>
-                <input
-                  type="checkbox"
-                  name="courses"
-                  value="MCA"
-                  onChange={handleCheckboxChange}
-                  checked={formik.values.courses.includes('MCA')}
-                />
-                MCA
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  name="courses"
-                  value="BCA"
-                  onChange={handleCheckboxChange}
-                  checked={formik.values.courses.includes('BCA')}
-                />
-                BCA
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  name="courses"
-                  value="BSC"
-                  onChange={handleCheckboxChange}
-                  checked={formik.values.courses.includes('BSC')}
-                />
-                BSC
-              </label>
+            {courses.map((course) => (
+                <label key={course}>
+                  <input
+                    type="checkbox"
+                    name="courses"
+                    value={course}
+                    onChange={handleCheckboxChange}
+                    checked={formik.values.courses.includes(course)}
+                  />
+                  {course}
+                </label>
+              ))}
             </div>
             {formik.touched.courses && formik.errors.courses && (
               <div className="text-red-500">{formik.errors.courses}</div>
             )}
-          </div>
           {/* Display Existing Image */}
           <div className="mt-4 flex items-center">
             <label className="w-32">Current Image:</label>

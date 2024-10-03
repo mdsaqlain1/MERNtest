@@ -43,6 +43,9 @@ const Navbar = () => {
       <div onClick={()=> navigate('/employes')} className="text-lg font-medium text-gray-800 hover:text-blue-600 hover:cursor-pointer">Employee List</div>
       </div>
 
+      <div>
+      <div onClick={()=> navigate('/addcourse')} className="text-lg font-medium text-gray-800 hover:text-blue-600 hover:cursor-pointer">Add Courses</div>
+      </div>
       {/* Username and Logout */}
       <div>
         {username ? (

@@ -6,6 +6,7 @@ import Employes from './components/Employes'
 import CreateEmployeeForm from './components/Empolyee'
 import UpdateEmployee from './components/UpdateEmployee'
 import { Landing } from './components/Landing'
+import { AddCourse } from './components/Addcourse'
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
           <Route path='/employes' element={<Employes />} />
           <Route path='/employeeform' element={<CreateEmployeeForm />} />
           <Route path='/updateemployee/:id' element={<UpdateEmployee />} />
+          <Route path='/addcourse' element={<AddCourse />} />
         </Routes>
       </Router>
     </>
